@@ -55,7 +55,7 @@ public:
     
     // Получить объект по идентификатору
     const T& Get(Id id) const {
-        return _id_to_element[id];
+        return _id_to_element.at(id);
     }
     
     // Увеличить приоритет объекта на 1
