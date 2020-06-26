@@ -12,7 +12,7 @@ using namespace std;
 template <typename T>
 class PriorityCollection {
 public:
-    using Id = size_t;
+    using Id = int;
     
     // Добавить объект с нулевым приоритетом
     // с помощью перемещения и вернуть его идентификатор
@@ -64,6 +64,7 @@ public:
         }
         ++_id_to_priority[id];
         _priority_to_id[_id_to_priority[id]].insert(id);
+        _max_priority = max(_max_priority, _id_to_priority[id]);
     }
     
     // Получить объект с максимальным приоритетом и его приоритет
@@ -88,6 +89,8 @@ public:
         it->second.erase(iit);
         if(it->second.size() == 0) {
             _priority_to_id.erase(it);
+            --it;
+            _max_priority = it->first;
         }
         T element = move(_id_to_element[id]);
         _id_to_element.erase(id);
@@ -101,8 +104,9 @@ private:
     map<int, set<Id>> _priority_to_id;
     map<Id, T> _id_to_element;
     map<Id, int> _id_to_priority;
-    Id _current_id = 0;
     set<Id> _valid_id;
+    Id _current_id = 0;
+    int _max_priority = 0;
 };
 
 
