@@ -78,7 +78,9 @@ public:
     pair<const T&, int> GetMax() const {
         auto it = _priority_to_id.end();
         --it;
-        return {_id_to_element[it->second.back()], it->first};
+        Id id = it->second.back();
+        int priority = _id_to_priority.at(id);
+        return {_id_to_element.at(id), priority};
     }
     
     // Аналогично GetMax, но удаляет элемент из контейнера
