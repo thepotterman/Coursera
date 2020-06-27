@@ -65,14 +65,26 @@ auto Paginate(C& c, size_t page_size) {
 	return Paginator(c.begin(), c.end(), page_size);
 }
 
+template<typename c>
+int64_t CalculateSingleThread(c page) {
+    int64_t sum = 0;
+    for(const auto & row : page) {
+        for(auto item : row) {
+            sum += item;
+        }
+    }
+    return sum;
+}
+
 int64_t CalculateMatrixSum(const vector<vector<int>>& matrix) {
     // Реализуйте эту функцию
-    auto pages = Paginate(matrix, matrix.size() / 4);
     int64_t sum = 0;
-    for(auto & page : pages) {
-        for(auto & row : page) {
-            sum += accumulate(row.begin(), row.end(), 0);
-        }
+    vector<future<int64_t>> futures;
+    for(auto & page : Paginate(matrix, 2000)) {
+        futures.push_back(async([=] { return CalculateSingleThread(page); })); 
+    }
+    for(auto & el : futures) {
+        sum += el.get();
     }
     return sum;
 }
