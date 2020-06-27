@@ -10,6 +10,65 @@
 
 using namespace std;
 
+// Реализуйте шаблон класса Paginator
+
+template <typename Iterator>
+class IteratorRange
+{
+public:
+	IteratorRange(Iterator begin, Iterator end)
+	{
+		_begin = begin;
+		_end = end;
+	}
+	size_t size() const
+	{
+		return _end - _begin;
+	}
+	Iterator begin() const
+	{
+		return _begin;
+	}
+	Iterator end() const
+	{
+		return _end;
+	}
+private:
+	Iterator _begin, _end;
+};
+
+template <typename Iterator>
+class Paginator {
+public:
+	Paginator(Iterator begin, Iterator end, size_t page_size) {
+		while(begin != end)
+		{
+			size_t range = end - begin;
+			_pages.push_back(IteratorRange(begin, begin + min(range, page_size)));
+			begin = _pages.back().end();	
+		}
+	}
+	size_t size() const
+	{
+		return _pages.size();
+	}
+	auto end() const
+	{
+		return _pages.end();
+	}
+	auto begin() const
+	{
+		return _pages.begin();
+	}
+private:
+	vector<IteratorRange<Iterator>> _pages;
+};
+
+template <typename C>
+auto Paginate(C& c, size_t page_size) {
+	return Paginator(c.begin(), c.end(), page_size);
+}
+
 struct Stats {
     map<string, int> word_frequences;
 
@@ -20,35 +79,47 @@ struct Stats {
     }
 };
 
-Stats ExploreLine(const set<string>& key_words, const string& line) {
-    Stats result;
-    stringstream ss(line);
-    string s;
-    while(ss >> s) {
-        if(key_words.count(s) != 0) {
-            ++result.word_frequences[move(s)];
-        }
-        s.clear();
-    }
-    return result;
-}
+//Stats ExploreLine(const set<string>& key_words, const string& line) {
+//    Stats result;
+//    stringstream ss(line);
+//    string s;
+//    while(ss >> s) {
+//        if(key_words.count(s) != 0) {
+//            ++result.word_frequences[move(s)];
+//        }
+//        s.clear();
+//    }
+//    return result;
+//}
 
-Stats ExploreKeyWordsSingleThread(const set<string>& key_words, istream& input) {
+Stats ExploreKeyWordsSingleThread(const set<string>& key_words, 
+                                        IteratorRange<vector<string>::iterator> page) {
     Stats result;
-    for (string line; getline(input, line); ) {
-        result += ExploreLine(key_words, line);
+    for(auto & s : page) {
+        if(key_words.count(s) == 1) {
+            ++result.word_frequences[s];
+        }
     }
     return result;
 }
 
 Stats ExploreKeyWords(const set<string>& key_words, istream& input) {
     // Реализуйте эту функцию
-    vector<future<Stats>> futures;
-    for(int i = 0; i < 4; ++i) {
-        futures.push_back(async(ExploreKeyWordsSingleThread, ref(key_words), ref(input)));
-    }
     Stats result;
-    for(int i = 0; i < 4; ++i) {
+    vector<string> strings;
+    string s;
+    int count = 4;
+    while(input >> s) {
+        strings.push_back(move(s));
+        s.clear();
+    }
+//    auto pages = Paginate(strings, strings.size());
+    auto pages = Paginate(strings, strings.size() / count);
+    vector<future<Stats>> futures;
+    for(auto page : pages) {
+        futures.push_back(async(ExploreKeyWordsSingleThread, ref(key_words), page));
+    }
+    for(int i = 0; i < futures.size(); ++i) {
         result += futures[i].get();
     }
     return result;
