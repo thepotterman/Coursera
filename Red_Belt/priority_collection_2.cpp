@@ -6,23 +6,23 @@
 #include <set>
 #include <utility>
 #include <vector>
+#include <list>
 
 using namespace std;
 
 template <typename T>
 class PriorityCollection {
 public:
+    using It = typename list<pair<T, int>>::iterator;
     using Id = int;
-    
-    // Добавить объект с нулевым приоритетом
+        // Добавить объект с нулевым приоритетом
     // с помощью перемещения и вернуть его идентификатор
     Id Add(T object) {
-        _id_to_element[_current_id] = move(object);
-        _id_to_priority[_current_id] = 0;
-        _priority_to_id[0].insert(_current_id);
+        It it = _objects_with_priority.insert(_objects_with_priority.end(), {move(object), 0});
+        _priority_with_id.insert({0, _current_id});
         _valid_id.insert(_current_id);
-        ++_current_id;
-        return _current_id - 1;
+        _id_to_it[_current_id] = move(it);
+        return _current_id++;
     }
     
     // Добавить все элементы диапазона [range_begin, range_end)
@@ -31,74 +31,62 @@ public:
     template <typename ObjInputIt, typename IdOutputIt>
     void Add(ObjInputIt range_begin, ObjInputIt range_end,
              IdOutputIt ids_begin) {
-        for(; range_begin != range_end; ++range_begin) {
-            _id_to_element[_current_id] = move(*(range_begin));
-            _id_to_priority[_current_id] = 0;
-            _priority_to_id[0].insert(_current_id);
-            *(ids_begin) = _current_id;
+        for(; range_begin != range_end; ++range_begin, ++ids_begin) {
+            It it = _objects_with_priority.insert(_objects_with_priority.end(), 
+                                                  {move(*(range_begin)), 0});
+            _priority_with_id.insert({0, _current_id});
             _valid_id.insert(_current_id);
-            ++ids_begin;
-            ++_current_id;
+            _id_to_it[_current_id] = move(it);
+            *(ids_begin) = _current_id++;
         }
     }
     
     // Определить, принадлежит ли идентификатор какому-либо
     // хранящемуся в контейнере объекту
     bool IsValid(Id id) const {
-        if(_valid_id.find(id) != _valid_id.end()) {
-            return true;
+        if(_valid_id.count(id) == 0) {
+            return false; 
         }
-        return false;
+        return true;
     }
     
     // Получить объект по идентификатору
     const T& Get(Id id) const {
-        return _id_to_element.at(id);
+        return _id_to_it.at(id)->first;
     }
     
     // Увеличить приоритет объекта на 1
     void Promote(Id id) {
-        _priority_to_id[_id_to_priority[id]].erase(id);
-        if(_priority_to_id[_id_to_priority[id]].size() == 0) {
-            _priority_to_id.erase(_id_to_priority[id]);
-        }
-        ++_id_to_priority[id];
-        _priority_to_id[_id_to_priority[id]].insert(move(id));
+        It it = _id_to_it[id];
+        _priority_with_id.erase({it->second, id});
+        ++it->second;
+        _priority_with_id.insert({it->second, id});
     }
     
     // Получить объект с максимальным приоритетом и его приоритет
     pair<const T&, int> GetMax() const {
-        auto it = _priority_to_id.end();
-        --it;
-        auto iit = it->second.end();
-        --iit;
-        return {_id_to_element.at(*(iit)), _id_to_priority.at(*(iit))};
+        auto pos = prev(_priority_with_id.end());
+        return *(_id_to_it.at(pos->second));
     }
     
     // Аналогично GetMax, но удаляет элемент из контейнера
     pair<T, int> PopMax() {
-        auto it = _priority_to_id.end();
-        --it;
-        auto iit = it->second.end();
-        --iit;
-        Id id = *(iit);
-        int priority = _id_to_priority[id];
-        it->second.erase(iit);
-        if(it->second.size() == 0) {
-            _priority_to_id.erase(it);
-        }
-        _id_to_priority.erase(id);
-        _valid_id.erase(id);
-        return {move(_id_to_element[id]), priority};
+        auto pos = prev(_priority_with_id.end());
+        _valid_id.erase(pos->second);
+        It it = _id_to_it[pos->second];
+        auto answer = move(*(it));
+        _id_to_it.erase(pos->second);
+        _priority_with_id.erase(pos);
+        return move(answer);
     }
     
 private:
     // Приватные поля и методы
-    map<int, set<Id>> _priority_to_id;
-    map<Id, T> _id_to_element;
-    map<Id, int> _id_to_priority;
-    Id _current_id = 0;
+    list<pair<T, int>> _objects_with_priority;
+    set<pair<int, Id>> _priority_with_id;           //???????????????????????????
+    map<Id, It> _id_to_it;
     set<Id> _valid_id;
+    Id _current_id = 0;
 };
 
 
