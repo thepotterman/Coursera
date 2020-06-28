@@ -1,0 +1,3 @@
+/home/thepotterman/Dev/Final/starter_files/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/thepotterman/Dev/Final/starter_files/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/thepotterman/Dev/Final/starter_files/cmake-build-debug/CMakeFiles/starter_files.dir
