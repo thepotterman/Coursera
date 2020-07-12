@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/starter_files.dir/main.cpp.o CMakeFiles/starter_files.dir/parse.cpp.o CMakeFiles/starter_files.dir/search_server.cpp.o  -o starter_files 
