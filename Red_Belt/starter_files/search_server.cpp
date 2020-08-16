@@ -7,27 +7,37 @@
 #include <sstream>
 #include <iostream>
 
+using namespace std;
+
 vector<string> SplitIntoWords(const string& line) {
   istringstream words_input(line);
   return {istream_iterator<string>(words_input), istream_iterator<string>()};
 }
 
-SearchServer::SearchServer(istream& document_input) {
-  UpdateDocumentBase(document_input);
+InvertedIndex::InvertedIndex(istream & document_input) {
+    for(string current_document; getline(document_input, current_document); ) {
+        this->Add(move(current_document));
+    }
 }
 
-void SearchServer::UpdateDocumentBase(istream& document_input) {
+void UpdateDocumentBaseSingleThread(istream& document_input, Synchronized<InvertedIndex> & _index) {
   InvertedIndex new_index;
   
   for (string current_document; getline(document_input, current_document); ) {
     new_index.Add(move(current_document));
   }
 
-  index = move(new_index);
+  auto access = _index.GetAccess();
+  swap(access.ref_to_value, new_index);
 }
 
-void SearchServer::AddQueriesStream(
-  istream& query_input, ostream& search_results_output
+void SearchServer::UpdateDocumentBase(istream& document_input) {
+//    UpdateDocumentBaseSingleThread(document_input, index);
+    futures.push_back(async(UpdateDocumentBaseSingleThread, ref(document_input), ref(index)));
+}
+
+void AddQueriesStreamSingleThread(
+  istream& query_input, ostream& search_results_output, Synchronized<InvertedIndex> & _index
 ) {
   for (string current_query; getline(query_input, current_query); ) {
     const auto words = SplitIntoWords(current_query);
@@ -37,7 +47,8 @@ void SearchServer::AddQueriesStream(
     vector<int64_t> ids_to_count(50000, 0);
     iota(ids.begin(), ids.end(), 0);
     for (const auto& word : words) {
-      for (auto & [id, count] : index.Lookup(word)) {
+      auto access = _index.GetAccess();
+      for (auto & [id, count] : access.ref_to_value.Lookup(word)) {
         ids_to_count[id]+= count;
       }
     }
@@ -75,6 +86,13 @@ void SearchServer::AddQueriesStream(
   }
 }
 
+void SearchServer::AddQueriesStream(
+  istream& query_input, ostream& search_results_output
+) {
+//    AddQueriesStreamSingleThread(query_input, search_results_output, index);
+    futures.push_back(async(AddQueriesStreamSingleThread, ref(query_input), ref(search_results_output), ref(index)));
+}
+
 void InvertedIndex::Add(const string& document) {
   docs.push_back(document);
 
@@ -89,8 +107,8 @@ void InvertedIndex::Add(const string& document) {
   }
 }
 
-vector<pair<size_t, size_t>> InvertedIndex::Lookup(const string& word) const {
-    vector<pair<size_t, size_t>> answer;
+const vector<pair<size_t, size_t>> InvertedIndex::Lookup(const string& word) const {
+    static const vector<pair<size_t, size_t>> answer;
   if (auto it = index.find(word); it != index.end()) {
     return it->second;
   } else {
