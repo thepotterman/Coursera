@@ -15,25 +15,29 @@ using namespace std;
 class InvertedIndex {
 public:
   InvertedIndex() = default;
+
   explicit InvertedIndex(istream & document_input);
-  void Add(const string& document);
+
   const vector<pair<size_t, size_t>> Lookup(const string& word) const;
 
-  const string& GetDocument(size_t id) const {
-    return docs[id];
+  const string& GetDocsCount() const {
+    return docs_count;
   }
 
 private:
+  size_t docs_count = 0;
   map<string, vector<pair<size_t,size_t>>> index;
-  vector<string> docs;
 };
 
 class SearchServer {
 public:
   SearchServer() = default;
+
   explicit SearchServer(istream& document_input)
       : index(InvertedIndex(document_input)) {}
+
   void UpdateDocumentBase(istream& document_input);
+
   void AddQueriesStream(istream& query_input, ostream& search_results_output);
 
 private:
