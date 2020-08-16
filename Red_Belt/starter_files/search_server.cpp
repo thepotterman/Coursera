@@ -18,7 +18,7 @@ SearchServer::SearchServer(istream& document_input) {
 
 void SearchServer::UpdateDocumentBase(istream& document_input) {
   InvertedIndex new_index;
-
+  
   for (string current_document; getline(document_input, current_document); ) {
     new_index.Add(move(current_document));
   }
@@ -37,8 +37,8 @@ void SearchServer::AddQueriesStream(
     vector<int64_t> ids_to_count(50000, 0);
     iota(ids.begin(), ids.end(), 0);
     for (const auto& word : words) {
-      for (const int64_t id : index.Lookup(word)) {
-        ids_to_count[id]++;
+      for (auto & [id, count] : index.Lookup(word)) {
+        ids_to_count[id]+= count;
       }
     }
 
@@ -78,16 +78,22 @@ void SearchServer::AddQueriesStream(
 void InvertedIndex::Add(const string& document) {
   docs.push_back(document);
 
-  const size_t docid = docs.size() - 1;
+  const size_t id = docs.size() - 1;
   for (const auto& word : SplitIntoWords(document)) {
-    index[word].push_back(docid);
+      auto & id_to_count = index[word];
+      if(!id_to_count.empty() && id_to_count.back().first == id) {
+        ++id_to_count.back().second;
+      } else {
+        id_to_count.push_back({id, 1});
+      }
   }
 }
 
-vector<size_t> InvertedIndex::Lookup(const string& word) const {
+vector<pair<size_t, size_t>> InvertedIndex::Lookup(const string& word) const {
+    vector<pair<size_t, size_t>> answer;
   if (auto it = index.find(word); it != index.end()) {
     return it->second;
   } else {
-    return {};
+    return answer;
   }
 }
