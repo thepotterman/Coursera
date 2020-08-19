@@ -1,25 +1,27 @@
 #pragma once
 
+#include "synchronized.h"
+
 #include <istream>
 #include <ostream>
 #include <set>
 #include <vector>
 #include <map>
 #include <string>
+#include <future>
 using namespace std;
 
 class InvertedIndex {
 public:
   void Add(const string& document);
-  vector<pair<size_t, size_t>> Lookup(const string& word) const;
-
-  const string& GetDocument(size_t id) const {
-    return docs[id];
+  const vector<pair<size_t, size_t>> & Lookup(const string& word) const;
+  size_t & GetSize() {
+    return docs_size;
   }
 
 private:
   map<string, vector<pair<size_t,size_t>>> index;
-  vector<string> docs;
+  size_t docs_size = 0;
 };
 
 class SearchServer {
@@ -30,5 +32,6 @@ public:
   void AddQueriesStream(istream& query_input, ostream& search_results_output);
 
 private:
-  InvertedIndex index;
+  Synchronized<InvertedIndex> index;
+  vector<future<void>> futures;
 };
