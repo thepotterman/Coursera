@@ -2,16 +2,34 @@
 #include "iterator_range.h"
 
 #include <algorithm>
+#include <string_view>
 #include <numeric>
 #include <iterator>
 #include <sstream>
 #include <iostream>
 
-vector<string> SplitIntoWords(const string& line) {
-  istringstream words_input(line);
-  return {
-      make_move_iterator(istream_iterator<string>(words_input)), 
-      make_move_iterator(istream_iterator<string>())};
+vector<string_view> SplitIntoWords(string_view line) {
+    size_t space = 0;
+    vector<string_view> answer;
+
+    while(true) {
+        size_t notspace = line.find_first_not_of(' ');
+        if(notspace == line.npos) {
+            break;
+        }
+        line.remove_prefix(notspace);
+        space = line.find(' ');
+
+        answer.push_back(line.substr(0, space));
+
+        if(space == line.npos) {
+            break;
+        } else {
+            line.remove_prefix(space + 1);
+        }
+    }
+
+    return answer;
 }
 
 void UpdateDocumentBaseSingleThread(istream& document_input, Synchronized<InvertedIndex> & index_) {
@@ -37,6 +55,7 @@ void AddQueriesStreamSingleThread(
   istream& query_input, ostream& search_results_output, Synchronized<InvertedIndex> & index_
 ) {
   for (string current_query; getline(query_input, current_query); ) {
+    
     const auto words = SplitIntoWords(current_query);
 
     vector<int64_t> ids;
@@ -83,12 +102,12 @@ void SearchServer::AddQueriesStream(
                 ref(index)));
 }
 
-void InvertedIndex::Add(const string& document) {
-//  docs.push_back(document);
+void InvertedIndex::Add(string document) {
+  docs.push_back(move(document));
   ++docs_size;
 
   const size_t id = docs_size - 1;
-  for (const auto& word : SplitIntoWords(move(document))) {
+  for (const auto& word : SplitIntoWords(docs[id])) {
       auto & id_to_count = index[word];
       if(!id_to_count.empty() && id_to_count.back().first == id) {
         ++id_to_count.back().second;
@@ -98,7 +117,7 @@ void InvertedIndex::Add(const string& document) {
   }
 }
 
-const vector<pair<size_t, size_t>> & InvertedIndex::Lookup(const string& word) const {
+const vector<pair<size_t, size_t>> & InvertedIndex::Lookup(const string_view word) const {
     static const vector<pair<size_t, size_t>> answer;
   if (auto it = index.find(word); it != index.end()) {
     return it->second;

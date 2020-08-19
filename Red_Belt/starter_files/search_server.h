@@ -6,22 +6,25 @@
 #include <ostream>
 #include <set>
 #include <vector>
+#include <deque>
 #include <map>
 #include <string>
+#include <string_view>
 #include <future>
 using namespace std;
 
 class InvertedIndex {
 public:
-  void Add(const string& document);
-  const vector<pair<size_t, size_t>> & Lookup(const string& word) const;
+  void Add(string document);
+  const vector<pair<size_t, size_t>> & Lookup(const string_view word) const;
   size_t & GetSize() {
     return docs_size;
   }
 
 private:
-  map<string, vector<pair<size_t,size_t>>> index;
+  map<string_view, vector<pair<size_t,size_t>>> index;
   size_t docs_size = 0;
+  deque<string> docs;
 };
 
 class SearchServer {
