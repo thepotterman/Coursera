@@ -8,6 +8,7 @@
 #include <vector>
 #include <deque>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <string_view>
 #include <future>
@@ -17,14 +18,18 @@ class InvertedIndex {
 public:
   void Add(string document);
   const vector<pair<size_t, size_t>> & Lookup(const string_view word) const;
+  void reserve() {
+    docs.reserve(15000);
+    index.reserve(15000);
+  }
   size_t & GetSize() {
     return docs_size;
   }
 
 private:
-  map<string_view, vector<pair<size_t,size_t>>> index;
+  unordered_map<string_view, vector<pair<size_t,size_t>>> index;
   size_t docs_size = 0;
-  deque<string> docs;
+  vector<string> docs;
 };
 
 class SearchServer {

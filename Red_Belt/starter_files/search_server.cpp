@@ -35,6 +35,8 @@ vector<string_view> SplitIntoWords(string_view line) {
 void UpdateDocumentBaseSingleThread(istream& document_input, Synchronized<InvertedIndex> & index_) {
   InvertedIndex new_index;
   
+  new_index.reserve(); 
+
   for (string current_document; getline(document_input, current_document); ) {
     new_index.Add(move(current_document));
   }
@@ -60,16 +62,16 @@ void AddQueriesStreamSingleThread(
 
     vector<int64_t> ids;
     vector<int64_t> ids_to_count;
+    size_t size = 0;
     {
         auto access = index_.GetAccess();
-        auto size = access.ref_to_value.GetSize();
-        ids.resize(size);
-        ids_to_count.assign(size, 0);
-        iota(ids.begin(), ids.end(), 0);
+        size = access.ref_to_value.GetSize();
     }
+    ids_to_count.assign(size, 0);
+    ids.resize(size);
+    iota(ids.begin(), ids.end(), 0);
     for (const auto& word : words) {
-      auto access = index_.GetAccess();
-      for (auto & [id, count] : access.ref_to_value.Lookup(word)) {   
+      for (auto & [id, count] : index_.GetAccess().ref_to_value.Lookup(word)) {   
         ids_to_count[id]+= count;
       }
     }
