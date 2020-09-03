@@ -12,14 +12,48 @@ public:
 
 public:
   explicit HashSet(
-      size_t num_buckets,
-      const Hasher& hasher = {}
-  );
+      size_t num_buckets_,
+      const Hasher& hasher_ = {}
+  )
+      : hasher(hasher_) {
+          data.resize(num_buckets_);
+      }
 
-  void Add(const Type& value);
-  bool Has(const Type& value) const;
-  void Erase(const Type& value);
-  const BucketList& GetBucket(const Type& value) const;
+  void Add(const Type& value) {
+    if(Has(value) == true) {
+        return;
+    }
+    size_t number = hasher(value);
+    number %= data.size();
+    data[number].push_front(value);
+  }
+  bool Has(const Type& value) const {
+    const auto Bucket = GetBucket(value);
+    bool answer = false;
+    for(const auto & x : Bucket) {
+        if(x == value) {
+            answer = true;
+            break;
+        }
+    }
+    return answer;
+  }
+  void Erase(const Type& value) {
+    if(Has(value)) {
+        size_t number = hasher(value);
+        number %= data.size();
+        data[number].remove(value);
+    }
+  }
+  const BucketList& GetBucket(const Type& value) const {
+    size_t number = hasher(value);
+    number %= data.size();
+    return data[number];
+  }
+
+private:
+  vector<BucketList> data;
+  const Hasher & hasher = {};
 };
 
 struct IntHasher {
