@@ -5,17 +5,16 @@
 using namespace std;
 
 void Sort(vector<int> & numbers, ofstream & output) {
-    for(int i = 0; i < numbers.size(); ++i) {
-        int j = 0;
-        for(j = i; j > 0; --j) {
-            if(numbers[j] < numbers[i]) {
-                break;
-            }
+    output << 1 << " ";
+    for(int i = 1; i < numbers.size(); ++i) {
+        int key = numbers[i];
+        int j = i - 1;
+        while(j >= 0 && numbers[j] > key) {
+            numbers[j + 1] = numbers[j];
+            j--;
         }
-        int tmp = numbers[j + 1];
-        numbers[j + 1] = numbers[i];
-        numbers[i] = tmp;
-        output << j + 1 << " ";
+        numbers[j + 1] = key;
+        output << j + 2 << " ";
     }
     output << "\n";
 }
