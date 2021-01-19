@@ -27,13 +27,15 @@ int main() {
         p = p + s;                
         all.push_back(p);        
     }        
+/*    
     const string name1 = []{                
         cout << "Enter the File name\n";                
         string s;                
         cin >> s;                
         return s;        
     }();        
-    ofstream out(name1);        
+*/
+    ofstream out(name);        
     for(const auto & s : all) {                
         out << s << endl;        
     }        
