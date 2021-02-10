@@ -14,15 +14,16 @@ public:
     explicit Synchronized(T initial = T()) 
     : value(move(initial)){}
 
+    template <typename U>
     struct Access {
-        T& ref_to_value;
-        lock_guard(mutex) m;
+        U& ref_to_value;
+        lock_guard<mutex> m;
     };
 
-    Access GetAccess() {
+    Access<T> GetAccess() {
         return {value, lock_guard(m)};
     }
-    Access GetAccess() const {
+    Access<const T> GetAccess() const {
         return {value, lock_guard(m)};
     }
 

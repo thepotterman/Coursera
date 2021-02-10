@@ -2,7 +2,10 @@
 #include "profile.h"
 
 #include <future>
+#include <deque>
 #include <mutex>
+#include <numeric>
+#include <string>
 #include <unordered_map>
 #include <vector>
 #include <utility>
@@ -16,23 +19,54 @@ public:
     using MapType = unordered_map<K, V, Hash>;
 
     struct WriteAccess {
+        lock_guard<mutex> guard;
         V& ref_to_value;
     };
 
     struct ReadAccess {
+        lock_guard<mutex> guard;
         const V& ref_to_value;
     };
 
-    explicit ConcurrentMap(size_t bucket_count);
+    explicit ConcurrentMap(size_t bucket_count) {
+        _maps.resize(bucket_count);
+        _mutexes.resize(bucket_count);
+    }
 
-    WriteAccess operator[](const K& key);
-    ReadAccess At(const K& key) const;
+    WriteAccess operator[](const K& key) {
+        return {
+            lock_guard(_mutexes[hasher(key) % _mutexes.size()]), 
+            _maps[hasher(key) % _maps.size()][key]
+        };
+    }
+    ReadAccess At(const K& key) const
+    {
+        return {
+            lock_guard(_mutexes[hasher(key) % _mutexes.size()]), 
+            _maps.at(hasher(key) % _maps.size()).at(key)
+        };
+    }
 
-    bool Has(const K& key) const;
+    bool Has(const K& key) const {
+        lock_guard<mutex> guard(_mutexes[hasher(key) % _mutexes.size()]);       //Хочется закоментить, но пока не буду.
+        return _maps.at(hasher(key) % _maps.size()).count(key);
+        //return _maps.at(hasher(key) % _maps.size()).at(key).size();
+    }
 
-    MapType BuildOrdinaryMap() const;
+    MapType BuildOrdinaryMap() const {
+        MapType answer;
+        for(size_t i = 0; i < _maps.size(); ++i) {
+            lock_guard<mutex> guard(_mutexes[i]);
+            MapType _map = _maps[i];
+            answer.merge(_map);
+        }
+        return answer;
+    }
 
 private:
+    vector<MapType> _maps;
+    //vector<unordered_map<K, V, Hash>> _maps;
+    mutable deque<mutex> _mutexes;
     Hash hasher;
 };
 
