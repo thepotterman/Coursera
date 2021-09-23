@@ -1,6 +1,6 @@
 #include <iostream>
 #include <ctime>
-#include <map>
+#include <unordered_map>
 
 using namespace std;
 
@@ -95,7 +95,7 @@ public:
         }
     }
 private:
-    map<size_t, MoneyPerDay> budget_;
+    unordered_map<size_t, MoneyPerDay> budget_;
 };
 
 int main(void) {
