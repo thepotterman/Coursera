@@ -99,6 +99,8 @@ private:
 };
 
 int main(void) {
+    cin.tie(nullptr);
+    std::ios_base::sync_with_stdio(false);
     cout.precision(25);
     size_t q = 0;
     cin >> q;
