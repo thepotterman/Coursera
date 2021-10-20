@@ -96,12 +96,6 @@
 		<Unit filename="/Users/vladimirpolikushin/Dev/Coursera/Brown_Belt/transport_dir/A/DataBase.h">
 			<Option target="A"/>
 		</Unit>
-		<Unit filename="/Users/vladimirpolikushin/Dev/Coursera/Brown_Belt/transport_dir/A/Streams.cpp">
-			<Option target="A"/>
-		</Unit>
-		<Unit filename="/Users/vladimirpolikushin/Dev/Coursera/Brown_Belt/transport_dir/A/Streams.h">
-			<Option target="A"/>
-		</Unit>
 		<Unit filename="/Users/vladimirpolikushin/Dev/Coursera/Brown_Belt/transport_dir/A/main.cpp">
 			<Option target="A"/>
 		</Unit>

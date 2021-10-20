@@ -1,0 +1,1 @@
+/Library/Developer/CommandLineTools/usr/bin/c++ -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/B.dir/main.cpp.o CMakeFiles/B.dir/Coordinate.cpp.o CMakeFiles/B.dir/DataBase.cpp.o CMakeFiles/B.dir/BusInfo.cpp.o CMakeFiles/B.dir/StopInfo.cpp.o -o B 

@@ -201,30 +201,6 @@ DataBase.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/A.dir/build.make CMakeFiles/A.dir/DataBase.cpp.s
 .PHONY : DataBase.cpp.s
 
-Streams.o: Streams.cpp.o
-.PHONY : Streams.o
-
-# target to build an object file
-Streams.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A.dir/build.make CMakeFiles/A.dir/Streams.cpp.o
-.PHONY : Streams.cpp.o
-
-Streams.i: Streams.cpp.i
-.PHONY : Streams.i
-
-# target to preprocess a source file
-Streams.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A.dir/build.make CMakeFiles/A.dir/Streams.cpp.i
-.PHONY : Streams.cpp.i
-
-Streams.s: Streams.cpp.s
-.PHONY : Streams.s
-
-# target to generate assembly for a file
-Streams.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A.dir/build.make CMakeFiles/A.dir/Streams.cpp.s
-.PHONY : Streams.cpp.s
-
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -267,9 +243,6 @@ help:
 	@echo "... DataBase.o"
 	@echo "... DataBase.i"
 	@echo "... DataBase.s"
-	@echo "... Streams.o"
-	@echo "... Streams.i"
-	@echo "... Streams.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

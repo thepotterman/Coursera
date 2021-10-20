@@ -3,4 +3,4 @@ project(A)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(A main.cpp Coordinate.h Coordinate.cpp DataBase.h DataBase.cpp Streams.h Streams.cpp BusInfo.h BusInfo.cpp)
+add_executable(A main.cpp Coordinate.h Coordinate.cpp DataBase.h DataBase.cpp BusInfo.h BusInfo.cpp)

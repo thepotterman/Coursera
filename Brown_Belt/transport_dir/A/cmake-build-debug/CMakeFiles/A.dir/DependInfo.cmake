@@ -11,7 +11,6 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/vladimirpolikushin/Dev/Coursera/Brown_Belt/transport_dir/A/BusInfo.cpp" "/Users/vladimirpolikushin/Dev/Coursera/Brown_Belt/transport_dir/A/cmake-build-debug/CMakeFiles/A.dir/BusInfo.cpp.o"
   "/Users/vladimirpolikushin/Dev/Coursera/Brown_Belt/transport_dir/A/Coordinate.cpp" "/Users/vladimirpolikushin/Dev/Coursera/Brown_Belt/transport_dir/A/cmake-build-debug/CMakeFiles/A.dir/Coordinate.cpp.o"
   "/Users/vladimirpolikushin/Dev/Coursera/Brown_Belt/transport_dir/A/DataBase.cpp" "/Users/vladimirpolikushin/Dev/Coursera/Brown_Belt/transport_dir/A/cmake-build-debug/CMakeFiles/A.dir/DataBase.cpp.o"
-  "/Users/vladimirpolikushin/Dev/Coursera/Brown_Belt/transport_dir/A/Streams.cpp" "/Users/vladimirpolikushin/Dev/Coursera/Brown_Belt/transport_dir/A/cmake-build-debug/CMakeFiles/A.dir/Streams.cpp.o"
   "/Users/vladimirpolikushin/Dev/Coursera/Brown_Belt/transport_dir/A/main.cpp" "/Users/vladimirpolikushin/Dev/Coursera/Brown_Belt/transport_dir/A/cmake-build-debug/CMakeFiles/A.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "AppleClang")

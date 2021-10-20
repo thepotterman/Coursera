@@ -4,7 +4,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/A.dir/BusInfo.cpp.o"
   "CMakeFiles/A.dir/Coordinate.cpp.o"
   "CMakeFiles/A.dir/DataBase.cpp.o"
-  "CMakeFiles/A.dir/Streams.cpp.o"
   "CMakeFiles/A.dir/main.cpp.o"
 )
 
