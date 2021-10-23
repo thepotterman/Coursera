@@ -33,14 +33,14 @@ public:
     int GetNumberUniqueStops() const;
     int GetNumberStops() const;
     long double GetStraightRouteLength() const;
-    long double GetRealRouteLength() const;
+    int GetRealRouteLength() const;
     long double GetCurvature() const;
     std::vector<std::string> GetStops() const;
 private:
-    int number_unique_stops_ = 0.0;
-    int number_stops_ = 0.0;
+    int number_unique_stops_ = 0;
+    int number_stops_ = 0;
     long double straight_route_length_ = 0.0;
-    long double real_route_length_ = 0.0;
+    int real_route_length_ = 0;
     long double curvature_ = 1.0;
     std::vector<std::string> stops_;
 };

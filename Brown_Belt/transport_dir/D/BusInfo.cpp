@@ -16,7 +16,7 @@ long double BusInfo::GetStraightRouteLength() const {
     return straight_route_length_;
 }
 
-long double BusInfo::GetRealRouteLength() const {
+int BusInfo::GetRealRouteLength() const {
     return real_route_length_;
 }
 
@@ -46,7 +46,7 @@ void BusInfo::ComputeStraightRouteLength(const std::unordered_map<std::string, S
 
 void BusInfo::ComputeRealRouteLength(const std::unordered_map<std::string, int>& distances) {
     for(int i = 1; i < stops_.size(); ++i) {
-        long double current_distance = 0.0;
+        int current_distance = 0;
         std::string stop_from = stops_[i - 1];
         std::string stop_to = stops_[i];
         std::string variant1 = stop_from + "_" + stop_to;
@@ -56,14 +56,14 @@ void BusInfo::ComputeRealRouteLength(const std::unordered_map<std::string, int>&
         } else if(distances.find(variant2) != distances.end()){
             current_distance = distances.at(variant2);
         } else {
-            current_distance = 0.0;
+            current_distance = 0;
         }
         real_route_length_ += current_distance;
     }
 }
 
 void BusInfo::ComputeCurvature() {
-    curvature_ = real_route_length_ / straight_route_length_;
+    curvature_ = static_cast<long double>(real_route_length_) / straight_route_length_;
 }
 
 std::vector<std::string> BusInfo::GetStops() const {

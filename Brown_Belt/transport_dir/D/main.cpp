@@ -7,6 +7,6 @@ int main() {
     DataBase db;
     db.Read(cin);
     db.Perform();
-    db.Answer(cin, cout);
+    db.Answer(cout);
     return 0;
 }

@@ -41,7 +41,7 @@ long double ComputeDistance(const Coordinate &lhs, const Coordinate &rhs)  {
     using std::acos;
     using std::sin;
     using std::cos;
-    using std::abs;
+    using std::fabs;
     const long double EARTH_RADIUS = 6371000;
     const long double PI = 3.1415926535;
     long double lat1 = lhs.GetLat() * PI / 180.0;
@@ -50,7 +50,7 @@ long double ComputeDistance(const Coordinate &lhs, const Coordinate &rhs)  {
     long double lon2 = rhs.GetLon() * PI / 180.0;
     long double sigma = acos(
         sin(lat1) * sin(lat2) +
-        cos(lat1) * cos(lat2) * cos(abs(lon1 - lon2))
+        cos(lat1) * cos(lat2) * cos(fabs(lon1 - lon2))
     );
     return sigma * EARTH_RADIUS;
 }
