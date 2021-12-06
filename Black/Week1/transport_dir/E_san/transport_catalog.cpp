@@ -12,7 +12,7 @@ TransportCatalog::TransportCatalog(vector<Descriptions::InputQuery> data, const 
   Descriptions::StopsDict stops_dict;
   for (const auto& item : Range{begin(data), stops_end}) {
     const auto& stop = get<Descriptions::Stop>(item);
-    stops_dict[stop.name] = &stop;
+    stops_dict[stop.name] = &stop; //HUETA?
     stops_.insert({stop.name, {}});
   }
 
@@ -20,7 +20,7 @@ TransportCatalog::TransportCatalog(vector<Descriptions::InputQuery> data, const 
   for (const auto& item : Range{stops_end, end(data)}) {
     const auto& bus = get<Descriptions::Bus>(item);
 
-    buses_dict[bus.name] = &bus;
+    buses_dict[bus.name] = &bus; //HUETA?
     buses_[bus.name] = Bus{
       bus.stops.size(),
       ComputeUniqueItemsCount(AsRange(bus.stops)),
