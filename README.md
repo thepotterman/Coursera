@@ -1,2 +1,2 @@
 # Coursera
-My submissions for Coursera C++ course
+My submissions for Coursera courses
